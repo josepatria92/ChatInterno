@@ -3,6 +3,8 @@ import { useQuasar } from 'quasar'
 import { ref, computed } from 'vue'
 import { useAuth } from '@vueuse/firebase/useAuth';
 import { db, auth } from '../boot/firebase'
+import { getAuth, signOut } from "firebase/auth";
+
 
 const { isAuthenticated, user } = useAuth(auth)
 
@@ -24,6 +26,18 @@ const style = computed(() => ({
   height: $q.screen.height + 'px'
 }))
 
+/**
+ * Log Out Event
+ */
+
+const logOut = () => {
+  const auth = getAuth();
+  signOut(auth).then(() => {
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
+}
 
 </script>
 
@@ -32,18 +46,16 @@ const style = computed(() => ({
   <div class="WAL position-relative bg-grey-4" :style="style">
     <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>
       <q-header elevated v-if="isAuthenticated">
-        <q-toolbar class="bg-grey-3 text-black" >
-          <q-btn round flat icon="keyboard_arrow_left" class="WAL__drawer-open q-mr-sm" />
-
+        <q-toolbar class="bg-grey-3 text-black">
           <span class="q-subtitle-1 q-pl-md">
-            Nombre de Usuario 
+            Nombre de Usuario
           </span>
-
+          <q-space />
+          <q-btn color="primary" flat label="Log Out" @click="logOut" />
         </q-toolbar>
       </q-header>
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
-        <q-table flat bordered grid  :rows="rows" :columns="columns" row-key="name" :filter="filter"
-          hide-header>
+        <q-table flat bordered grid :rows="rows" :columns="columns" row-key="name" :filter="filter" hide-header>
           <template v-slot:top-left>
             <q-input outlined rounded label="Buscar Usuario" dense debounce="300" v-model="filter" placeholder="Search">
               <template v-slot:append>

@@ -11,8 +11,8 @@ const { isAuthenticated, user } = useAuth(auth)
 
 <template>
   <q-page class="flex flex-center">
-    <Access v-if="isAuthenticated"/>
-    <Message v-if="!isAuthenticated"/>
+    <Access v-if="!isAuthenticated"/>
+    <Message v-if="isAuthenticated"/>
   </q-page>
 </template>
 
