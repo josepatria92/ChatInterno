@@ -1,116 +1,121 @@
+<script setup>
+import { useQuasar } from 'quasar'
+import { ref, computed } from 'vue'
+import { useAuth } from '@vueuse/firebase/useAuth';
+import { db, auth } from '../boot/firebase'
+
+const { isAuthenticated, user } = useAuth(auth)
+
+
+/**
+ * Quasar Const
+ */
+const $q = useQuasar()
+
+/**
+ * Drawer open
+ */
+const leftDrawerOpen = ref(false)
+
+/**
+ * Screen height
+ */
+const style = computed(() => ({
+  height: $q.screen.height + 'px'
+}))
+
+
+</script>
+
+
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+  <div class="WAL position-relative bg-grey-4" :style="style">
+    <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>
+      <q-header elevated v-if="isAuthenticated">
+        <q-toolbar class="bg-grey-3 text-black" >
+          <q-btn round flat icon="keyboard_arrow_left" class="WAL__drawer-open q-mr-sm" />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+          <span class="q-subtitle-1 q-pl-md">
+            Nombre de Usuario 
+          </span>
 
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
+        </q-toolbar>
+      </q-header>
+      <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
+        <q-table flat bordered grid  :rows="rows" :columns="columns" row-key="name" :filter="filter"
+          hide-header>
+          <template v-slot:top-left>
+            <q-input outlined rounded label="Buscar Usuario" dense debounce="300" v-model="filter" placeholder="Search">
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </template>
+        </q-table>
+      </q-drawer>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+      <q-page-container class="bg-grey-2">
+        <router-view />
+      </q-page-container>
 
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+      <q-footer v-if="isAuthenticated">
+        <q-toolbar class="bg-grey-3 text-black row">
+          <q-input rounded outlined dense class="WAL__field col-grow q-mr-sm" bg-color="white" v-model="message"
+            placeholder="Text" />
+          <q-btn round flat icon="send" />
+        </q-toolbar>
+      </q-footer>
+    </q-layout>
+  </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+<style lang="sass">
+.WAL
+  width: 100%
+  height: 100%
+  padding-top: 20px
+  padding-bottom: 20px
 
-export default defineComponent({
-  name: 'MainLayout',
+  &:before
+    content: ''
+    height: 127px
+    position: fixed
+    top: 0
+    width: 100%
+    background-color: #009688
 
-  components: {
-    EssentialLink
-  },
+  &__layout
+    margin: 0 auto
+    z-index: 4000
+    height: 100%
+    width: 90%
+    max-width: 950px
+    border-radius: 5px
 
-  setup () {
-    const leftDrawerOpen = ref(false)
+  &__field.q-field--outlined .q-field__control:before
+    border: none
 
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
-    }
-  }
-})
-</script>
+  .q-drawer--standard
+    .WAL__drawer-close
+      display: none
+
+@media (max-width: 850px)
+  .WAL
+    padding: 0
+    &__layout
+      width: 100%
+      border-radius: 0
+
+@media (min-width: 691px)
+  .WAL
+    &__drawer-open
+      display: none
+
+.conversation__summary
+  margin-top: 4px
+
+.conversation__more
+  margin-top: 0!important
+  font-size: 1.4rem
+</style>
