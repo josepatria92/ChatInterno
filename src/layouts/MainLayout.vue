@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 import { useAuth } from '@vueuse/firebase/useAuth';
 import { db, auth } from '../boot/firebase'
 import { getAuth, signOut } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 /**
  * Is Authenticated
@@ -55,14 +55,14 @@ let userArray = ref([]);
  */
 const columns = [
   {
-    name:'user',
-    label:'User',
-    align:'center',
-    field:'email',
+    name: 'user',
+    label: 'User',
+    align: 'center',
+    field: 'email',
   }
 ];
 
-
+const message = ref('')
 /**
  * Get User
  */
@@ -71,12 +71,27 @@ const getUser = async () => {
   querySnapshot.forEach((doc) => {
     //console.log(doc.id, " => ", doc.data());
     const userEmail = {
-      email:doc.data().email
+      email: doc.data().email
     }
     userArray.value.push(userEmail)
   })
 }
 getUser()
+
+/**
+ * Add Text Cloud FireStore
+ */
+const addTex = async () => {
+  // Add a new document with a generated id.
+  const docRef = await addDoc(collection(db, "chats"), {
+    message: message.value,
+    uid: auth.currentUser.uid,
+    time: Date.now(),
+    email:auth.currentUser.email
+  });
+  message.value = '';
+  //console.log("Document written with ID: ", docRef.id);
+}
 </script>
 
 
@@ -93,7 +108,7 @@ getUser()
         </q-toolbar>
       </q-header>
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
-        <q-table  flat borderless :columns="columns" :rows="userArray" hide-bottom :filter="filter" hide-header>
+        <q-table flat borderless :columns="columns" :rows="userArray" hide-bottom :filter="filter" hide-header>
           <template v-slot:top-left>
             <q-input outlined rounded label="Buscar Usuario" dense debounce="300" v-model="filter" placeholder="Search">
               <template v-slot:append>
@@ -105,15 +120,15 @@ getUser()
       </q-drawer>
 
       <q-page-container class="bg-grey-2">
-        
+
         <router-view />
       </q-page-container>
 
       <q-footer v-if="isAuthenticated">
         <q-toolbar class="bg-grey-3 text-black row">
           <q-input rounded outlined dense class="WAL__field col-grow q-mr-sm" bg-color="white" v-model="message"
-            placeholder="Text" />
-          <q-btn round flat icon="send" />
+            placeholder="Text" @keyup.enter="addTex" />
+          <q-btn round flat icon="send" @click="addTex" />
         </q-toolbar>
       </q-footer>
     </q-layout>
