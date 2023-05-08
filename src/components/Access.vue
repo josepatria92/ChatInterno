@@ -37,6 +37,5 @@ const objectModel = ref({
                 <q-btn label="Submit" type="submit" color="primary" flat />
             </div>
         </q-form>
-
     </div>
 </template>
