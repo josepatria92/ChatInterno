@@ -4,10 +4,12 @@ import { ref, computed } from 'vue'
 import { useAuth } from '@vueuse/firebase/useAuth';
 import { db, auth } from '../boot/firebase'
 import { getAuth, signOut } from "firebase/auth";
+import { collection, getDocs } from "firebase/firestore";
 
-
+/**
+ * Is Authenticated
+ */
 const { isAuthenticated, user } = useAuth(auth)
-
 
 /**
  * Quasar Const
@@ -29,7 +31,6 @@ const style = computed(() => ({
 /**
  * Log Out Event
  */
-
 const logOut = () => {
   const auth = getAuth();
   signOut(auth).then(() => {
@@ -39,6 +40,43 @@ const logOut = () => {
   });
 }
 
+/**
+ * Filter
+ */
+const filter = ref()
+
+/**
+ * All User array 
+ */
+let userArray = ref([]);
+
+/**
+ * columns 
+ */
+const columns = [
+  {
+    name:'user',
+    label:'User',
+    align:'center',
+    field:'email',
+  }
+];
+
+
+/**
+ * Get User
+ */
+const getUser = async () => {
+  const querySnapshot = await getDocs(collection(db, "User"));
+  querySnapshot.forEach((doc) => {
+    //console.log(doc.id, " => ", doc.data());
+    const userEmail = {
+      email:doc.data().email
+    }
+    userArray.value.push(userEmail)
+  })
+}
+getUser()
 </script>
 
 
@@ -55,7 +93,7 @@ const logOut = () => {
         </q-toolbar>
       </q-header>
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
-        <q-table flat bordered grid :rows="rows" :columns="columns" row-key="name" :filter="filter" hide-header>
+        <q-table  flat borderless :columns="columns" :rows="userArray" hide-bottom :filter="filter" hide-header>
           <template v-slot:top-left>
             <q-input outlined rounded label="Buscar Usuario" dense debounce="300" v-model="filter" placeholder="Search">
               <template v-slot:append>
@@ -67,6 +105,7 @@ const logOut = () => {
       </q-drawer>
 
       <q-page-container class="bg-grey-2">
+        
         <router-view />
       </q-page-container>
 
