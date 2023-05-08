@@ -1,3 +1,12 @@
+<script setup>
+import { useAuth } from '@vueuse/firebase/useAuth';
+import { db, auth } from '../boot/firebase'
+
+const { isAuthenticated, user } = useAuth(auth)
+
+
+</script>
+
 <template>
   <q-page class="flex flex-center">
     <img
@@ -8,10 +17,3 @@
   </q-page>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'IndexPage'
-})
-</script>

@@ -23,8 +23,7 @@ module.exports = configure(function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
     boot: [
-      
-      
+      'firebase'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -62,7 +61,14 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
+      env: {
+          VITE_apiKey: "AIzaSyCCx8cOlxRgM0cBQAmgT8eCh1jVYl1Nc0c",
+          VITE_authDomain: "chatinterno-e5093.firebaseapp.com",
+          VITE_projectId: "chatinterno-e5093",
+          VITE_storageBucket: "chatinterno-e5093.appspot.com",
+          VITE_messagingSenderId: "303156154512",
+          VITE_appId: "1:303156154512:web:feea9b93c6b14631d84815"
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
