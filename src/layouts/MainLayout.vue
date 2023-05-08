@@ -4,10 +4,12 @@ import { ref, computed } from 'vue'
 import { useAuth } from '@vueuse/firebase/useAuth';
 import { db, auth } from '../boot/firebase'
 import { getAuth, signOut } from "firebase/auth";
+import { collection, getDocs } from "firebase/firestore";
 
-
+/**
+ * Is Authenticated
+ */
 const { isAuthenticated, user } = useAuth(auth)
-
 
 /**
  * Quasar Const
@@ -29,7 +31,6 @@ const style = computed(() => ({
 /**
  * Log Out Event
  */
-
 const logOut = () => {
   const auth = getAuth();
   signOut(auth).then(() => {
@@ -39,6 +40,17 @@ const logOut = () => {
   });
 }
 
+/**
+ * Get User
+ */
+const getUser = async () => {
+  const querySnapshot = await getDocs(collection(db, "User"));
+  querySnapshot.forEach((doc) => {
+    console.log(doc.id, " => ", doc.data());
+
+  })
+}
+getUser()
 </script>
 
 
