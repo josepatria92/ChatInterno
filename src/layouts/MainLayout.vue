@@ -93,7 +93,7 @@ getUser()
         </q-toolbar>
       </q-header>
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
-        <q-table flat borderless :columns="columns" :rows="userArray"  :filter="filter" hide-header>
+        <q-table  flat borderless :columns="columns" :rows="userArray" hide-bottom :filter="filter" hide-header>
           <template v-slot:top-left>
             <q-input outlined rounded label="Buscar Usuario" dense debounce="300" v-model="filter" placeholder="Search">
               <template v-slot:append>
