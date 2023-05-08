@@ -33,12 +33,11 @@ const style = computed(() => ({
     <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>
       <q-header elevated v-if="isAuthenticated">
         <q-toolbar class="bg-grey-3 text-black" >
-          <q-btn round flat icon="keyboard_arrow_left" class="WAL__drawer-open q-mr-sm" />
-
           <span class="q-subtitle-1 q-pl-md">
             Nombre de Usuario 
           </span>
-
+          <q-space />
+          <q-btn color="primary" flat label="Log Out"/>
         </q-toolbar>
       </q-header>
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
