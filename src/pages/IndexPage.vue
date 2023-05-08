@@ -1,6 +1,8 @@
 <script setup>
 import { useAuth } from '@vueuse/firebase/useAuth';
 import { db, auth } from '../boot/firebase'
+import Access from 'components/Access.vue';
+import Message from 'components/Message.vue';
 
 const { isAuthenticated, user } = useAuth(auth)
 
@@ -9,11 +11,8 @@ const { isAuthenticated, user } = useAuth(auth)
 
 <template>
   <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+    <Access v-if="!isAuthenticated"/>
+    <Message v-if="isAuthenticated"/>
   </q-page>
 </template>
 

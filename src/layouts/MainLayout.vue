@@ -1,7 +1,10 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, computed } from 'vue'
+import { useAuth } from '@vueuse/firebase/useAuth';
+import { db, auth } from '../boot/firebase'
 
+const { isAuthenticated, user } = useAuth(auth)
 
 
 /**
@@ -28,8 +31,8 @@ const style = computed(() => ({
 <template>
   <div class="WAL position-relative bg-grey-4" :style="style">
     <q-layout view="lHh Lpr lFf" class="WAL__layout shadow-3" container>
-      <q-header elevated>
-        <q-toolbar class="bg-grey-3 text-black">
+      <q-header elevated v-if="isAuthenticated">
+        <q-toolbar class="bg-grey-3 text-black" >
           <q-btn round flat icon="keyboard_arrow_left" class="WAL__drawer-open q-mr-sm" />
 
           <span class="q-subtitle-1 q-pl-md">
@@ -38,7 +41,7 @@ const style = computed(() => ({
 
         </q-toolbar>
       </q-header>
-      <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690">
+      <q-drawer v-model="leftDrawerOpen" show-if-above bordered :breakpoint="690" v-if="isAuthenticated">
         <q-table flat bordered grid  :rows="rows" :columns="columns" row-key="name" :filter="filter"
           hide-header>
           <template v-slot:top-left>
@@ -55,7 +58,7 @@ const style = computed(() => ({
         <router-view />
       </q-page-container>
 
-      <q-footer>
+      <q-footer v-if="isAuthenticated">
         <q-toolbar class="bg-grey-3 text-black row">
           <q-input rounded outlined dense class="WAL__field col-grow q-mr-sm" bg-color="white" v-model="message"
             placeholder="Text" />
